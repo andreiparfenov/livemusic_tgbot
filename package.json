@@ -1,0 +1,19 @@
+{
+  "name": "livemusic_bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrei Parfenov",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "moment": "^2.27.0",
+    "telegraf": "^3.38.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
