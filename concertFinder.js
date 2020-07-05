@@ -7,4 +7,3 @@ module.exports = {
     "url": encodeURI(`${BASE_URL}/search/?q=${bandName}&lang=&expand=&location=msk&ctype=event&is_free=&lat=&lon=&radius=`)
   })
 }
-

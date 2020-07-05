@@ -7,7 +7,14 @@ const session = require('telegraf/session');
 const moment = require('moment');
 moment.locale('ru');
 
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/livemusic_bot', {useNewUrlParser: true});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+
+const userService = require('./services/userService');
 const concertFinder = require('./concertFinder');
+const { callbackButton } = require('telegraf/markup');
 
 const bot = new Telegraf(process.env.BOT_TOKEN) // get the token from envirenment variable
 
@@ -17,7 +24,8 @@ bot.start(ctx => {
       Markup.inlineKeyboard([
         Markup.callbackButton('Найти концерты', 'FIND_CONCERTS')
       ]).extra()
-  )
+  );
+  userService.registerUser(ctx.from.id, ctx.from.first_name, ctx.from.last_name);
 });
 
 const findConcerts = new WizardScene(
@@ -36,6 +44,7 @@ const findConcerts = new WizardScene(
           let date = moment(new Date(event.daterange.start_date*1000)).format('LL');
           let time = moment.utc(event.daterange.start_time*1000).format('HH:mm');
           let description =  event.description.replace(/<[^>]*>?/gm, '').trim();
+          //ctx.reply(res.data.results[0]);
           ctx.replyWithMarkdown(
             `
 🎵 Найден ${event.title}
@@ -45,10 +54,18 @@ const findConcerts = new WizardScene(
 💫 ${description}
 
 🔗 [Подробнее](${event.item_url})
-            `
+            `,
+            Markup.inlineKeyboard([
+              Markup.callbackButton('Найти ещё концерты', 'FIND_CONCERTS')
+            ]).extra()
           );
         } else {
-          ctx.reply("Этот исполнитель не выступает в ближайшее время рядом с вами :(")
+          ctx.reply(
+            "Этот исполнитель не выступает в ближайшее время рядом с вами :(",
+            Markup.inlineKeyboard([
+              Markup.callbackButton('Найти концерт другого исполнителя', 'FIND_CONCERTS')
+            ]).extra()
+          )
         }
       })
       .catch(err => ctx.reply(
