@@ -34,8 +34,8 @@ const findConcerts = new WizardScene(
     ctx.reply("Введи имя исполнителя или группы");
     return ctx.wizard.next();
   },
-  ctx => {
-    const bandName = ctx.message.text;
+  async ctx => {
+    const bandName = await ctx.message.text;
     userService.addInterest(ctx.from.id, bandName);
     concertFinder
       .findConcertsByName(bandName)
