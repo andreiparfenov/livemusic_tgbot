@@ -38,7 +38,8 @@ const findConcerts = new WizardScene(
     return ctx.wizard.next();
   },
   async ctx => {
-    const bandName = await ctx.message.text;
+    const message = await ctx.message;
+    const bandName = message.text;
     userService.addInterest(ctx.from.id, bandName);
     concertFinder
       .findConcertsByName(bandName)
