@@ -8,13 +8,13 @@ const moment = require('moment');
 moment.locale('ru');
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/livemusic_bot', {useNewUrlParser: true});
+//mongoose.connect('mongodb://localhost/livemusic_bot', {useNewUrlParser: true});
+mongoose.connect('mongodb+srv://andreip:G8ocSchZy5dvprf4@cluster0.aak1h.mongodb.net/Cluster0?retryWrites=true&w=majority', {useNewUrlParser: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 const userService = require('./services/userService');
-const concertFinder = require('./concertFinder');
-const { callbackButton } = require('telegraf/markup');
+const concertFinder = require('./services/concertFinder');
 
 const bot = new Telegraf(process.env.BOT_TOKEN) // get the token from envirenment variable
 
@@ -25,7 +25,7 @@ bot.start(ctx => {
         Markup.callbackButton('Найти концерты', 'FIND_CONCERTS')
       ]).extra()
   );
-  userService.registerUser(ctx.from.id, ctx.from.first_name, ctx.from.last_name);
+  userService.registerUser(ctx.from.id, ctx.from.username, ctx.from.first_name, ctx.from.last_name);
 });
 
 const findConcerts = new WizardScene(
@@ -36,6 +36,7 @@ const findConcerts = new WizardScene(
   },
   ctx => {
     const bandName = ctx.message.text;
+    userService.addInterest(ctx.from.id, bandName);
     concertFinder
       .findConcertsByName(bandName)
       .then(res => {
