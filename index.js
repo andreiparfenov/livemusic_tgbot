@@ -7,6 +7,9 @@ const session = require('telegraf/session');
 const moment = require('moment');
 moment.locale('ru');
 
+const express = require('express')
+const expressApp = express()
+
 const mongoose = require('mongoose');
 //mongoose.connect('mongodb://localhost/livemusic_bot', {useNewUrlParser: true});
 mongoose.connect('mongodb+srv://andreip:G8ocSchZy5dvprf4@cluster0.aak1h.mongodb.net/Cluster0?retryWrites=true&w=majority', {useNewUrlParser: true});
@@ -80,3 +83,5 @@ const stage = new Stage([findConcerts], { default: 'find_concerts' }); // Scene 
 bot.use(session());
 bot.use(stage.middleware());
 bot.launch() // start
+
+expressApp.listen(process.env.PORT || 3000);
